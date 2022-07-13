@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LocationsController;
+use App\Http\Controllers\CustomerInfoController;
+use App\Models\Country;
+use App\Models\State;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +18,30 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome');    
 });
+
+Route::get('/countries', function () {
+    return Country::all();
+});
+
+Route::get('/states', function () {
+    return State::all();
+});
+
+Route::get('/states/{country_code}', function ($country_code) {
+    if( isset($country_code) && $country_code > 0 ){
+        return State::where('country_code', $country_code)->get();
+    }
+    else{
+        abort(404); 
+    }
+});
+
+Route::get('/customers/create', function () {
+    return view('customer.create', [
+        'countries' => Country::all(),        
+    ]);  
+});
+
+Route::post('/customers/store', [CustomerInfoController::class, 'saveInfo']);
